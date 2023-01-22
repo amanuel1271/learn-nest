@@ -23,7 +23,6 @@ it('We can check if the consumer called the class constructor', () => {
 
 it('We can check if the consumer called a method on the class instance', () => {
   const soundPlayerConsumer = new SoundPlayerConsumer();
-  const coolSoundFileName = 'song.mp3';
   soundPlayerConsumer.playSomethingCool();
-  expect(mockPlaySoundFile).toHaveBeenCalledWith(coolSoundFileName);
+  expect(mockPlaySoundFile).toHaveBeenCalledWith('song.mp3');
 });
