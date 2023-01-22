@@ -1,18 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MessagesController } from './messages.controller';
 
-describe('MessagesController', () => {
-  let controller: MessagesController;
+import SoundPlayer from './sound-player';
+import SoundPlayerConsumer from './sound-player-consumer';
+jest.mock('./sound-player'); // SoundPlayer is now a mock constructor
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [MessagesController],
-    }).compile();
+const mockPlaySoundFile = jest.fn();
 
-    controller = module.get<MessagesController>(MessagesController);
+beforeAll(() => {
+  (SoundPlayer as any).mockImplementation(() => {
+    // Replace the class-creation method with this mock version.
+    return {playSoundFile: mockPlaySoundFile};
   });
+});
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+beforeEach(() => {
+  // Clear all instances and calls to constructor and all methods:
+  (SoundPlayer as any).mockClear();
+  mockPlaySoundFile.mockClear();
+});
+
+it('We can check if the consumer called the class constructor', () => {
+  const soundPlayerConsumer = new SoundPlayerConsumer();
+  expect(SoundPlayer).toHaveBeenCalledTimes(1);
+});
+
+it('We can check if the consumer called a method on the class instance', () => {
+  const soundPlayerConsumer = new SoundPlayerConsumer();
+  const coolSoundFileName = 'song.mp3';
+  soundPlayerConsumer.playSomethingCool();
+  expect(mockPlaySoundFile).toHaveBeenCalledWith(coolSoundFileName);
 });
